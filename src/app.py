@@ -7,36 +7,73 @@ def get_todos():
 
 def add_one_task(title):
     # your code here
+    newTask = {}
+    newTask.update({
+        "label": title,
+        "done": False
+    })
+    todos.append(newTask)
     pass
 
 def print_list():
     # your code here
+    if todos != []:
+        print("\nThe items currently in memory")
+        count = 1
+        for newThings in todos:
+            print("Task -" + str(count) + "-> " + str(newThings["label"]) + " -completed-> " 
+            + str(newThings["done"]))
+            count += 1
+        pass
+    
+    else:
+        print("The current list is empty...")
     pass
 
 def delete_task(number_to_delete):
     # your code here
+    for things in range(len(todos)):
+        if (int(number_to_delete)-1) == (int(things)):
+            print("Deleting from local memory...")
+            del todos[int(things)]
     pass
 
 def initialize_todos():
     global todos
-    r = requests.get('https://assets.breatheco.de/apis/fake/todos/user/alesanchezr') 
+    r = requests.get('https://assets.breatheco.de/apis/fake/todos/user/leisy') 
     if(r.status_code == 404):
         print("No previous todos found, starting a new todolist")
-        r = requests.post(url = 'https://assets.breatheco.de/apis/fake/todos/user/alesanchezr', data = []) 
+        print(r)
         if r.status_code == 200:
             print("Tasks initialized successfully")
+        elif r.status_code == 500:
+            r = requests.post(url = 'https://assets.breatheco.de/apis/fake/todos/user/leisy', headers = {"Content-Type":"application/json"}, data = [] )
+            print("Server response(500) -> " + str(r))
+        elif r.status_code == 404:
+            r = requests.post(url = 'https://assets.breatheco.de/apis/fake/todos/user/leisy', headers = {"Content-Type":"application/json"}, data = [] )
+            print("Server response(404) -> " + str(r))
     else:
         print("A todo list was found, loading the todos...")
         todos = r.json()
 
+
     
 def save_todos():
     # your code here
+    temp = json.dumps(todos)
+    r = requests.put(url = 'https://assets.breatheco.de/apis/fake/todos/user/leisy', headers = {"Content-Type":"application/json"}, data = temp)
+    print(r.json())
+    print(r)
     pass
+
 
 def load_todos():
     # your code here
+    r = requests.get('https://assets.breatheco.de/apis/fake/todos/user/leisy') 
+    todos = r.json()
+    print(todos)
     pass
+
     
 # Below this code will only run if the entry file running was app.py
 if __name__ == '__main__':
